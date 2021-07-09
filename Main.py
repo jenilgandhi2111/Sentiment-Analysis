@@ -1,4 +1,3 @@
-from keras.optimizer_v2 import adam
 import pandas as pd
 import numpy as np
 import tensorflow as tf
@@ -19,10 +18,12 @@ df_list = pd.read_csv("Data/archive/IMDB Dataset.csv").values.tolist()
 vocab.clean_sentences(df_list)
 vocab.build_vocab(df_list)
 (x, y) = vocab.numericalize_sentences(df_list)
-x = vocab.pad_num_sentences(x)
-# Now X has padded sentences list and Y has sentiments
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.15)
+# Now X has padded sentences list and Y has sentiments
+x = vocab.pad_num_sentences(x)
+
+x_train, x_test, y_train, y_test = train_test_split(
+    x, y, test_size=0.15, shuffle=True)
 
 x_train = np.array(x_train)
 x_test = np.array(x_test)
