@@ -7,6 +7,7 @@ from Vocab import Vocab
 from sklearn.model_selection import train_test_split
 from Model import Model
 import matplotlib.pyplot as plt
+from keras.callbacks import ModelCheckpoint
 
 
 # Vocab Object
@@ -31,7 +32,7 @@ y_train = np.array(y_train)
 y_test = np.array(y_test)
 
 # Model parameters
-EPOCHS = 10
+EPOCHS = 3
 BATCH_SIZE = 32
 vocab_size = len(vocab)
 embed_size = 128
@@ -41,6 +42,11 @@ maxlen = 100
 l1 = 0.0001
 l2 = 0.0002
 
+modelCheckpoint = ModelCheckpoint(filepath="saved_models/sentiment.h5",
+                                  monitor="val_loss",
+                                  mode="min",
+                                  save_best_only=True,
+                                  verbose=1)
 
 model = Model(vocab_size=vocab_size,
               embed_size=embed_size,
@@ -52,7 +58,8 @@ model = Model(vocab_size=vocab_size,
 model.compile(optimizer=adam_v2.Adam(learning_rate=lr),
               loss="binary_crossentropy", metrics=["accuracy"])
 history = model.fit(x_train, y_train, batch_size=BATCH_SIZE,
-                    epochs=EPOCHS, validation_data=(x_test, y_test))
+                    epochs=EPOCHS, validation_data=(x_test, y_test),
+                    callbacks=[modelCheckpoint])
 
 # Visualizing the loss
 plt.plot(history.history["accuracy"])
